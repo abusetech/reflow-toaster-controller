@@ -10,6 +10,10 @@
 //
 /***************************************************************************************/
 
+//Button pin assignments. 
+#define BTN_START A1
+#define BTN_STOP A0
+
 //Profile Paramters
 //Rate parameters in degrees / millisecond
 #define PREHEAT_RATE  0.002
@@ -19,7 +23,6 @@
 #define PREHEAT_TIME_LIMIT 120000
 #define SOAK_TIME_LIMIT    90000
 #define RAMP_TIME_LIMIT    60000
-
 
 #define btnRIGHT  0
 #define btnUP     1
@@ -41,7 +44,7 @@
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);                 // select the pins used on the LCD panel
 SlowPWM relay_output(PWM_PERIOD, RELAY_PIN);         // relay to be controlled
 Max6675 thermometer(THERM_SCK, THERM_CS, THERM_SO);  // thermocouple sensor
-PID pid(0.1, 0.2, 0.05, PWM_PERIOD);                // PID controller
+PID pid(0.1, 0.2, 0.05, PWM_PERIOD);                 // PID controller
 
 enum process_states{
   READY = 0,
@@ -73,24 +76,29 @@ int phase = 0;
 char* process_msg[] = {"READY", "PREHEAT", "SOAK", "RAMP UP", "REFLOW", "COOLING"};
 
 int read_LCD_buttons(){               // read the buttons
-
-if (!digitalRead(A1)) return btnSELECT;
-else if (!digitalRead(A0)) return btnDOWN;
-else return btnNONE;
-
-/*
-    adc_key_in = analogRead(0);       // read the value from the sensor 
-
-    if (adc_key_in > 1000) return btnNONE; 
-    if (adc_key_in < 50)   return btnRIGHT;  
-    if (adc_key_in < 250)  return btnUP; 
-    if (adc_key_in < 450)  return btnDOWN; 
-    if (adc_key_in < 650)  return btnLEFT; 
-    if (adc_key_in < 850)  return btnSELECT;  
-
-    return btnNONE;                // when all others fail, return this.
-*/
-}
+  
+  //This function was initially used to read the buttons from the LCD shield.
+  //It has since been modified to use a pair of simple push buttons instead
+  //But the code to read the bottons from the LDCD shield has been left here
+  //for future use. 
+  
+  if (!digitalRead(BTN_START)) return btnSELECT;
+  else if (!digitalRead(BTN_STOP)) return btnDOWN;
+  else return btnNONE;
+  
+  /*
+      adc_key_in = analogRead(0);       // read the value from the sensor 
+  
+      if (adc_key_in > 1000) return btnNONE; 
+      if (adc_key_in < 50)   return btnRIGHT;  
+      if (adc_key_in < 250)  return btnUP; 
+      if (adc_key_in < 450)  return btnDOWN; 
+      if (adc_key_in < 650)  return btnLEFT; 
+      if (adc_key_in < 850)  return btnSELECT;  
+  
+      return btnNONE;                // when all others fail, return this.
+  */
+ }
 
 ISR(WDT_vect){
   //WDT Expired, All pins become inputs, pullups disabled
